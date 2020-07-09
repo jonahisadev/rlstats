@@ -1,6 +1,7 @@
 const fs = require('fs');
 const discord = require('discord.js');
 const scraper = require('./scraper');
+const commands = require('./commands');
 const User = require('./user.db');
 
 const client = new discord.Client();
@@ -14,7 +15,7 @@ client.on('message', async (message) => {
     const args = message.content.split(' ');
     if (args[0] == '!rls') {
 
-        if (message.channel.name != 'stats') {
+        if (message.channel.name != 'rlstats') {
             message.member.send('Please use my commands in the #stats channel');
             return;
         }
@@ -66,6 +67,27 @@ client.on('message', async (message) => {
                     });
                 });
                 break;
+            }
+
+            case 'session': {
+                if (args.length < 3) {
+                    message.reply('What do you want to do with the session?');
+                    return;
+                }
+
+                switch (args[2]) {
+                    case 'start': {
+                        // TODO: Start the session
+                        message.react('👍');
+                        break;
+                    }
+
+                    case 'finish': {
+                        // TODO: End the session
+                        message.react('🤘');
+                        message.reply('Nice session! Here are your session stats:');
+                    }
+                }
             }
         }
 
