@@ -3,7 +3,11 @@ mongoose.connect('mongodb://localhost/rls', {useNewUrlParser: true, useUnifiedTo
 
 var userSchema = mongoose.Schema({
     discord_id: String,
-    url: String
+    url: String,
+    // stats: Object,
+
+    in_session: Boolean,
+    session_stats: Object
 });
 
 module.exports = mongoose.model('User', userSchema);

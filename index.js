@@ -1,7 +1,6 @@
 const fs = require('fs');
 const discord = require('discord.js');
 const scraper = require('./scraper');
-const commands = require('./commands');
 const User = require('./user.db');
 
 const client = new discord.Client();
@@ -9,6 +8,11 @@ const tokens = JSON.parse(fs.readFileSync('config.json'));
 
 client.once('ready', () => {
     console.log("Here we go!");
+    client.user.setActivity('with balls ⚽');
+});
+
+client.on('guildCreate', (guild) => {
+    guild.channels.create('rlstats');
 });
 
 client.on('message', async (message) => {
@@ -22,20 +26,43 @@ client.on('message', async (message) => {
 
         switch (args[1])
         {
-            case '__once': {
-                if (args.length < 3) {
-                    message.reply('Please provide a link');
-                    return;
-                }
+            case 'alltime': {
+                User.findOne({discord_id: message.member.id}).then(async user => {
+                    if (user == null) {
+                        message.reply('You\'re not registered! Register with \`!rls register <link>\`');
+                        return;
+                    }
 
-                const stats = await scraper.go(args[2]);
-                const it = stats[Symbol.iterator]();
-                var str = `Here are all the stats I could find for ${message.author.toString()}:\n`;
-                for (let item of it) {
-                    str += `  ${item[0]}: ${item[1]}\n`;
-                }
+                    const stats = await scraper.go(user.url);
+                    var fields = [];
 
-                message.channel.send(str);
+                    for (var key in stats) {
+                        if (key == 'Tracker Score' ||
+                                key == 'Goal/Shot %' ||
+                                key == 'MVP/Win %')
+                        {
+                            continue;
+                        }
+
+                        fields.push({
+                            name: key,
+                            value: stats[key],
+                            inline: true
+                        });
+                    }
+
+                    message.channel.send({
+                        content: `Here are ${message.member.toString()}'s stats!`,
+                        embed: {
+                            color: 3447003,
+                            title: "All Time Stats",
+                            fields: fields,
+                            footer: {
+                                text: "Bleep bloop, a robot generated this"
+                            }
+                        }
+                    });
+                });
                 break;
             }
 
@@ -57,7 +84,9 @@ client.on('message', async (message) => {
 
                     const new_user = new User({
                         discord_id: discord_id,
-                        url: args[2]
+                        url: args[2],
+                        in_session: false,
+                        session_stats: {}
                     });
                     new_user.save({}).then(user => {
                         message.reply('Welcome to Rocket League Stats!');
@@ -77,15 +106,74 @@ client.on('message', async (message) => {
 
                 switch (args[2]) {
                     case 'start': {
-                        // TODO: Start the session
-                        message.react('👍');
+                        User.findOne({discord_id: message.member.id}).then(async user => {
+                            if (user == null) {
+                                message.reply('You\'re not registered! Register with \`!rls register <link>\`');
+                                return;
+                            }
+
+                            if (user.in_session) {
+                                message.reply('You\'re already in a session!');
+                                return;
+                            }
+
+                            user.session_stats = await scraper.go(user.url);
+                            user.in_session = true;
+                            user.save({}).then(_ => {
+                                message.react('👍');
+                            });
+                        });
                         break;
                     }
 
-                    case 'finish': {
-                        // TODO: End the session
-                        message.react('🤘');
-                        message.reply('Nice session! Here are your session stats:');
+                    case 'stop': {
+                        User.findOne({ discord_id: message.member.id }).then(async user => {
+                            if (user == null) {
+                                message.reply('You\'re not registered! Register with \`!rls register <link>\`');
+                                return;
+                            }
+
+                            if (!user.in_session) {
+                                message.reply('You\'re not in a session!');
+                                return;
+                            }
+
+                            const old_stats = user.session_stats;
+                            const new_stats = await scraper.go(user.url);
+                            user.in_session = false;
+                            var fields = [];
+
+                            for (var key in new_stats) {
+                                if (key == 'Tracker Score' ||
+                                    key == 'Goal/Shot %' ||
+                                    key == 'MVP/Win %') {
+                                    continue;
+                                }
+
+                                new_stats[key] -= old_stats[key];
+                                fields.push({
+                                    name: key,
+                                    value: (new_stats[key] != NaN) ? parseInt(new_stats[key]) : 0,
+                                    inline: true
+                                });
+                            }
+
+                            user.save({}).then(_ => {
+                                message.react('🤘');
+                                message.channel.send({
+                                    content: `Here are ${message.member.toString()}'s stats!`,
+                                    embed: {
+                                        color: 3447003,
+                                        title: "This Session's Stats",
+                                        fields: fields,
+                                        footer: {
+                                            text: "Bleep bloop, a robot generated this"
+                                        }
+                                    }
+                                });
+                            });
+                        });
+                        break;
                     }
                 }
             }
@@ -95,5 +183,3 @@ client.on('message', async (message) => {
 });
 
 client.login(tokens.client_id);
-
-// scraper.go('https://rocketleague.tracker.network/profile/steam/76561198216933521');

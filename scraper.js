@@ -8,12 +8,12 @@ module.exports.go = async function(url) {
         const html = res.data;
         const $ = cheerio.load(html);
 
-        var map = new Map();
+        var map = {}
         $('div.stats-large').children('.stat').each((i, el) => {
             const name = $($(el).children('.name')[0]).text().trim();
             const value = $($(el).children('.value')[0]).text().trim();
 
-            map.set(name, value);
+            map[name] = value;
         });
 
         return map;
