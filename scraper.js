@@ -11,7 +11,7 @@ module.exports.go = async function(url) {
         var map = {}
         $('div.stats-large').children('.stat').each((i, el) => {
             const name = $($(el).children('.name')[0]).text().trim();
-            const value = $($(el).children('.value')[0]).text().trim();
+            const value = $($(el).children('.value')[0]).text().trim().replace(/,/gi, '');
 
             map[name] = value;
         });
