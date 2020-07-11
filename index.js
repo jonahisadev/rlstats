@@ -66,6 +66,13 @@ client.on('message', async (message) => {
                 break;
             }
 
+            case '__alive': {
+                if (message.member.hasPermission("ADMINISTRATOR")) {
+                    message.member.send('I am alive');
+                }
+                break;
+            }
+
             default: {
                 bot.help(message.member);
                 break;
