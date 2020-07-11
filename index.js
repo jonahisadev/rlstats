@@ -6,7 +6,7 @@ const User = require('./user.db');
 const cmd = require('./commands');
 
 const client = new discord.Client();
-const tokens = JSON.parse(fs.readFileSync('config.json'));
+const config = JSON.parse(fs.readFileSync('config.json'));
 
 client.once('ready', () => {
     console.log("Here we go!");
@@ -32,7 +32,7 @@ client.on('guildCreate', (guild) => {
 
 client.on('message', async (message) => {
     const args = message.content.split(' ');
-    if (args[0] == '!rls') {
+    if (args[0] == config.prefix) {
 
         if (message.channel.name != 'rlstats') {
             message.member.send('Please use my commands in the #rlstats channel');
@@ -75,4 +75,4 @@ client.on('message', async (message) => {
     }
 });
 
-client.login(tokens.client_id);
+client.login(config.client_id);
