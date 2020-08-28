@@ -15,9 +15,8 @@ module.exports.alltime = async function(message)
         var fields = [];
 
         for (var key in stats) {
-            if (key == 'Tracker Score' ||
-                key == 'Goal/Shot %' ||
-                key == 'MVP/Win %') {
+            if (key == 'Score' ||
+                key == 'Goal Shot Ratio') {
                 continue;
             }
 
@@ -126,9 +125,8 @@ module.exports.session = async function(message, args)
                 var fields = [];
 
                 for (var key in new_stats) {
-                    if (key == 'Tracker Score' ||
-                        key == 'Goal/Shot %' ||
-                        key == 'MVP/Win %') {
+                    if (key == 'Score' ||
+                        key == 'Goal Shot Ratio') {
                         continue;
                     }
 
