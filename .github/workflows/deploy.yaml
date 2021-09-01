@@ -33,7 +33,7 @@ jobs:
         # Source directory
         SOURCE: "./"
         # Target directory
-        TARGET: "/home/bitnami/stack/apps/main"
+        TARGET: "/home/ubuntu/apps/rlstats"
     - name: Restart the server
       uses: appleboy/ssh-action@master
       with:
