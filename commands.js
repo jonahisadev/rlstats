@@ -62,19 +62,26 @@ module.exports.register = async function(message, args)
             message.reply('Please provide a link to your <https://rocketleague.tracker.network> profile!');
             return;
         }
+        
+        // Extract profile elements
+        let start = args[2].substr(args[2].indexOf('/profile/') + 9);
+        let url = start.match(/(.*)\//)[1];
 
+        // Create new user
         const new_user = new User({
             discord_id: discord_id,
-            url: args[2],
+            url: url,
             in_session: false,
             session_stats: {}
         });
+
+        // Store user
         new_user.save({}).then(user => {
             message.reply('Welcome to Rocket League Stats!');
         })
-            .catch(err => {
-                message.reply(`DOh! ${err}`);
-            });
+        .catch(err => {
+            message.reply(`DOh! ${err}`);
+        });
     });
 }
 
