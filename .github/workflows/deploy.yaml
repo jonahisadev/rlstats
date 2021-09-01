@@ -41,7 +41,7 @@ jobs:
         username: ${{ secrets.REMOTE_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /home/bitnami/stack/apps/main/
+          cd /home/ubuntu/apps/rlstats
           sudo chown -R ${{secrets.REMOTE_USER}}:${{secrets.REMOTE_USER}} .
           forever stop index.js
           sudo npm i
