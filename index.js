@@ -68,6 +68,17 @@ client.on('message', async (message) => {
                         cmd.bc_register(message, args[3]);
                         break;
                     }
+
+                    case 'ping': {
+                        User.findOne({ discord_id: message.member.id }).then(user => {
+                            const api = new BallChasing(user.bc_key);
+                            if (!api.getPlayerID())
+                                message.react('👎');
+                            else
+                                message.react('👍');
+                        });
+                        break;
+                    }
                 }
                 break;
             }
