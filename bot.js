@@ -26,6 +26,10 @@ module.exports.help = function(dest)
                 {
                     "name": "!rls alltime",
                     "value": "View your all time Rocket League stats."
+                },
+                {
+                    "name": "(Send this to me in a DM) !rls bc key <api_key>",
+                    "value": "Link your BallChasing.com account (helpful for sessions!)"
                 }
             ],
             "footer": {

@@ -4,6 +4,7 @@ const scraper = require('./scraper');
 const bot = require('./bot');
 const User = require('./user.db');
 const cmd = require('./commands');
+const BallChasing = require('./bc');
 
 const client = new discord.Client();
 const config = JSON.parse(fs.readFileSync('config.json'));
@@ -34,7 +35,7 @@ client.on('message', async (message) => {
     const args = message.content.split(' ');
     if (args[0] == config.prefix) {
 
-        if (message.channel.name != 'rlstats') {
+        if (args[1] !== 'bc' && message.channel.name != 'rlstats') {
             message.member.send('Please use my commands in the #rlstats channel');
             return;
         }
@@ -53,6 +54,21 @@ client.on('message', async (message) => {
 
             case 'session': {
                 await cmd.session(message, args);
+                break;
+            }
+
+            case 'bc': {
+                switch (args[2]) {
+                    case 'key': {
+                        if (message.guild) {
+                            message.delete();
+                            message.member.send("Don't share your API Key! Send that command here!");
+                        }
+
+                        cmd.bc_register(message, args[3]);
+                        break;
+                    }
+                }
                 break;
             }
 
