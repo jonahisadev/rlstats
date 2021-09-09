@@ -111,7 +111,7 @@ async function bc_session_stop(message, key, date)
         // Get stats
         const start = process.hrtime();
         const stats = await api.getStatsFromReplay(name, replay);
-        ['wins', 'goals', 'saves', 'shots', 'mvp', 'demos', 'assists'].forEach(stat => {
+        ['Wins', 'Goals', 'Saves', 'Shots', 'MVP', 'Demos', 'Assists'].forEach(stat => {
             if (total_stats[stat] === undefined)
                 total_stats[stat] = 0;
             total_stats[stat] += stats[stat];
@@ -122,6 +122,9 @@ async function bc_session_stop(message, key, date)
         while (now[1] - start[1] >= 500000000)
             now = process.hrtime();
     }
+
+    // Customize fields
+    total_stats['Wins'] = total_stats['Wins'] + '/' + replays.length;
 
     // Format fields
     let fields = [];

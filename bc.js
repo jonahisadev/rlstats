@@ -88,13 +88,13 @@ class BallChasing
 
             // Get stats
             return {
-                goals: player['stats']['core']['goals'],
-                shots: player['stats']['core']['shots'],
-                saves: player['stats']['core']['saves'],
-                mvp:   player['stats']['core']['mvp'] ? 1 : 0,
-                demos: player['stats']['demo']['inflicted'],
-                assists: player['stats']['core']['assists'],
-                wins:   (winner == team) ? 1 : 0,
+                'Goals': player['stats']['core']['goals'],
+                'Shots': player['stats']['core']['shots'],
+                'Saves': player['stats']['core']['saves'],
+                'MVP':   player['stats']['core']['mvp'] ? 1 : 0,
+                'Demos': player['stats']['demo']['inflicted'],
+                'Assists': player['stats']['core']['assists'],
+                'Wins':   (winner == team) ? 1 : 0,
             }
         })
     }
